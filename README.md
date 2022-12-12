@@ -1,2 +1,5 @@
 # endoflife.date-neo4j
-A set of Neo4J resources around endoflife.date data
+
+A set of Neo4J resources around endoflife.date data.
+
+**WARNING : project under active construction**
