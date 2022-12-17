@@ -1,11 +1,3 @@
-// purge
-drop CONSTRAINT EOL_UNIQUE_PRODUCTS if exists;
-MATCH (n) DETACH DELETE n;
-// TODO
-
-###########################################################
-
-
 // Load all products
 CALL apoc.load.json("https://endoflife.date/api/all.json")
 YIELD value
@@ -40,17 +32,3 @@ MATCH
 WHERE c.product = p.name
 CREATE (c)-[r:EOL_CYCLE_OF]->(p)
 RETURN type(r);
-
-
-
-// link editors
-//Amazon% # https://github.com/endoflife-date/endoflife.date/pull/2010
-//Apache%
-//Google%
-//Microsoft%
-//vmware%
-//Linux
-
-// API enhacement
-//category
-//product url
