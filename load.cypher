@@ -1,4 +1,6 @@
 // purge
+drop CONSTRAINT EOL_UNIQUE_PRODUCTS if exists;
+MATCH (n) DETACH DELETE n;
 // TODO
 
 ###########################################################
@@ -8,33 +10,35 @@
 CALL apoc.load.json("https://endoflife.date/api/all.json")
 YIELD value
 UNWIND value.result AS product
-MERGE (p:Product {name: product, url: 'https://endoflife.date/' + product});
+MERGE (p:EOLProduct {name: product, url: 'https://endoflife.date/' + product});
 
-MATCH (p:Product) RETURN p;
+// create unique index
+CREATE CONSTRAINT EOL_UNIQUE_PRODUCTS ON (p:EOLProduct) ASSERT p.product IS UNIQUE;
 
-// load cycles
-MATCH (p:Product) 
+MATCH (p:EOLProduct) RETURN p;
+
+// load cycles https://github.com/endoflife-date/endoflife.date/issues/2079
+MATCH (p:EOLProduct) 
     CALL apoc.load.json('https://endoflife.date/api/' + p.name + '.json')
     YIELD value
-    MERGE (c:Cycle {product: p.name,
+    MERGE (c:EOLCycle {product: p.name,
                     cycle: value.cycle,
-                    eol: value.eol,
-                    support: value.support,
-                    latest: value.latest,
-                    latestReleaseDate: value.latestReleaseDate,
-                    releaseDate: value.releaseDate,
-                    lts: value.lts,
-                    link: value.link
+                    //eol: value.eol,
+                    //support: value.support,
+                    //latest: value.latest,
+                    //latestReleaseDate: value.latestReleaseDate,
+                    //releaseDate: value.releaseDate,
+                    lts: value.lts//, link: value.link
                     }
             );
 
 
 // link cycles with products
 MATCH
-  (c:Cycle),
-  (p:Product)
+  (c:EOLCycle),
+  (p:EOLProduct)
 WHERE c.product = p.name
-CREATE (c)-[r:CYCLE_OF]->(p)
+CREATE (c)-[r:EOL_CYCLE_OF]->(p)
 RETURN type(r);
 
 
