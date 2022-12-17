@@ -32,3 +32,6 @@ MATCH
 WHERE c.product = p.name
 CREATE (c)-[r:EOL_CYCLE_OF]->(p)
 RETURN type(r);
+
+// display graph structure
+call apoc.meta.graph;
